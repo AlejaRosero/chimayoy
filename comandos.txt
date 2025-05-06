@@ -1,0 +1,8 @@
+//crear proyecto vite//
+npm create vite@latest chimayoy
+  Vanilla
+  JavaScript
+  cd chimayoy
+  npm install
+  //ejecutar //
+  npm run dev
