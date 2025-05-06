@@ -1,0 +1,47 @@
+pipeline {
+    agent any  // Usar cualquier agente disponible (nodo de ejecución)
+
+    stages {
+        stage('Clonar') {
+            steps {
+                // Clona el repositorio desde GitHub
+                // Asegúrate de reemplazar 'TU_ID_CREDENCIAL' con el ID real de las credenciales en Jenkins
+                git credentialsId: 'B188154A-B5DB-4823-81D6-C2FE7F033E16', url: 'https://github.com/AlejaRosero/chimayoy.git', branch: 'main'
+            }
+        }
+
+        stage('Instalar dependencias') {
+            steps {
+                // Instala las dependencias definidas en package.json
+                bat 'npm install'
+            }
+        }
+
+        stage('Construir') {
+            steps {
+                // Ejecuta el comando de construcción del proyecto Vite
+                // Esto genera los archivos listos para producción en la carpeta "dist"
+                bat 'npm run build'
+            }
+        }
+
+        stage('Ver archivos generados') {
+            steps {
+                // Muestra los archivos que fueron generados en la carpeta "dist"
+                // Sirve para verificar que la compilación se realizó correctamente
+                bat 'dir dist'
+            }
+        }
+    }
+
+    post {
+        success {
+            // Mensaje si todo el pipeline se ejecutó correctamente
+            echo '✅ El pipeline se ejecutó correctamente en Windows.'
+        }
+        failure {
+            // Mensaje si alguna etapa del pipeline falló
+            echo '❌ Hubo un error en alguna etapa del pipeline.'
+        }
+    }
+}
