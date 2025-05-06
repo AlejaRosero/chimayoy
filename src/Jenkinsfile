@@ -37,11 +37,11 @@ pipeline {
     post {
         success {
             // Mensaje si todo el pipeline se ejecutó correctamente
-            echo '✅ El pipeline se ejecutó correctamente en Windows.'
+            echo ' El pipeline se ejecutó correctamente en Windows.'
         }
         failure {
             // Mensaje si alguna etapa del pipeline falló
-            echo '❌ Hubo un error en alguna etapa del pipeline.'
+            echo ' Hubo un error en alguna etapa del pipeline.'
         }
     }
 }
