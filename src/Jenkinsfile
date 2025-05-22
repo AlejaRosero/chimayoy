@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        // Token de Vercel almacenado como credencial 
-        VERCEL_TOKEN = credentials('0FUVu3EStBDDT1r1kt6Pn5z1')
+        // Usar el ID de la credencial, 
+        VERCEL_TOKEN = credentials('vercel-token')
     }
 
     stages {
@@ -36,10 +36,10 @@ pipeline {
 
     post {
         success {
-            echo ' Despliegue exitoso en Vercel.'
+            echo '✅ Despliegue exitoso en Vercel.'
         }
         failure {
-            echo ' Falló el despliegue. Revisa los logs.'
+            echo '❌ Falló el despliegue. Revisa los logs.'
         }
     }
 }
