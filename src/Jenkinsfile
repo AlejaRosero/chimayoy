@@ -1,14 +1,17 @@
 pipeline {
-    agent any  // Usar cualquier agente disponible (nodo de ejecución)
+    agent any
 
     environment {
-        VERCEL_TOKEN = credentials('v0FUVu3EStBDDT1r1kt6Pn5z1')  // Asegúrate de haber creado esta credencial en Jenkins
+        // Token de Vercel almacenado como credencial 
+        VERCEL_TOKEN = credentials('0FUVu3EStBDDT1r1kt6Pn5z1')
     }
 
     stages {
-        stage('Clonar') {1
+        stage('Clonar repositorio') {
             steps {
-                git credentialsId: 'B188154A-B5DB-4823-81D6-C2FE7F033E16', url: 'https://github.com/AlejaRosero/chimayoy.git', branch: 'main'
+                git credentialsId: 'b188154a-b5db-4823-81d6-c2fe7f033e16',
+                    url: 'https://github.com/AlejaRosero/chimayoy.git',
+                    branch: 'main'
             }
         }
 
@@ -18,15 +21,9 @@ pipeline {
             }
         }
 
-        stage('Construir') {
+        stage('Build del proyecto') {
             steps {
                 bat 'npm run build'
-            }
-        }
-
-        stage('Ver archivos generados') {
-            steps {
-                bat 'dir dist'
             }
         }
 
@@ -39,10 +36,10 @@ pipeline {
 
     post {
         success {
-            echo 'El pipeline se ejecutó correctamente en Windows.'
+            echo ' Despliegue exitoso en Vercel.'
         }
         failure {
-            echo 'Hubo un error en alguna etapa del pipeline.'
+            echo ' Falló el despliegue. Revisa los logs.'
         }
     }
 }
