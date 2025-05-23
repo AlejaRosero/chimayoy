@@ -3,48 +3,41 @@ pipeline {
 
     stages {
 
-        // Etapa 1: Instalación de dependencias
         stage('Build') {
             steps {
-                // Ejecuta 'npm install' para instalar dependencias desde package.json
-                sh 'npm install'
+                // Ejecuta npm install en Windows usando PowerShell
+                bat 'npm install'
             }
         }
 
-        // Etapa 2: Ejecución de pruebas
         stage('Test') {
             steps {
-                // Ejecuta pruebas unitarias definidas en tu proyecto (npm test)
-                sh 'npm test'
+                // Ejecuta pruebas unitarias usando npm test en Windows
+                bat 'npm test'
             }
         }
 
-        // Etapa 3: Despliegue de la aplicación
         stage('Deploy') {
             steps {
-                // Mensaje informativo
                 echo 'Eliminando versión anterior...'
 
-                // Borra los archivos del directorio donde se despliega la app (ajusta esta ruta)
-                sh 'rm -rf /var/www/mi-aplicacion/*'
+                // Borra archivos en la carpeta de producción
+                bat 'rmdir /s /q "C:\\inetpub\\Mi app jenkins"'
+                bat 'mkdir "C:\\inetpub\\Mi app jenkins"'
 
-                // Mensaje informativo
                 echo 'Copiando nueva versión...'
 
-                // Copia el código actual al directorio de producción (ajusta según tu estructura)
-                sh 'cp -r * /var/www/mi-aplicacion/'
+                // Copia todo el contenido del workspace a la carpeta de producción
+                bat 'xcopy /E /I /Y * "C:\\inetpub\\Mi app jenkins\\"'
 
-                // Reinicia el servicio si tu aplicación tiene uno definido (opcional)
-                echo 'Reiniciando servidor...'
-                sh 'systemctl restart mi-aplicacion' // Solo si usas systemd. Puedes comentar si no aplica.
+                echo 'Despliegue completado.'
             }
         }
     }
 
-    // Bloque post para acciones que se ejecutan siempre (éxito o fallo)
     post {
         always {
-            echo 'Pipeline finalizada'
+            echo 'Pipeline finalizado'
         }
     }
 }
