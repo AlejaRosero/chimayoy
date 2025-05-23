@@ -1,45 +1,50 @@
 pipeline {
-    agent any
-
-    environment {
-        // Usar el ID de la credencial, 
-        VERCEL_TOKEN = credentials('vercel-token')
-    }
+    agent any // Ejecuta este pipeline en cualquier agente disponible
 
     stages {
-        stage('Clonar repositorio') {
+
+        // Etapa 1: Instalación de dependencias
+        stage('Build') {
             steps {
-                git credentialsId: 'b188154a-b5db-4823-81d6-c2fe7f033e16',
-                    url: 'https://github.com/AlejaRosero/chimayoy.git',
-                    branch: 'main'
+                // Ejecuta 'npm install' para instalar dependencias desde package.json
+                sh 'npm install'
             }
         }
 
-        stage('Instalar dependencias') {
+        // Etapa 2: Ejecución de pruebas
+        stage('Test') {
             steps {
-                bat 'npm install'
+                // Ejecuta pruebas unitarias definidas en tu proyecto (npm test)
+                sh 'npm test'
             }
         }
 
-        stage('Build del proyecto') {
+        // Etapa 3: Despliegue de la aplicación
+        stage('Deploy') {
             steps {
-                bat 'npm run build'
-            }
-        }
+                // Mensaje informativo
+                echo 'Eliminando versión anterior...'
 
-        stage('Desplegar en Vercel') {
-            steps {
-                bat "vercel --token=%VERCEL_TOKEN% --prod --yes"
+                // Borra los archivos del directorio donde se despliega la app (ajusta esta ruta)
+                sh 'rm -rf /var/www/mi-aplicacion/*'
+
+                // Mensaje informativo
+                echo 'Copiando nueva versión...'
+
+                // Copia el código actual al directorio de producción (ajusta según tu estructura)
+                sh 'cp -r * /var/www/mi-aplicacion/'
+
+                // Reinicia el servicio si tu aplicación tiene uno definido (opcional)
+                echo 'Reiniciando servidor...'
+                sh 'systemctl restart mi-aplicacion' // Solo si usas systemd. Puedes comentar si no aplica.
             }
         }
     }
 
+    // Bloque post para acciones que se ejecutan siempre (éxito o fallo)
     post {
-        success {
-            echo '✅ Despliegue exitoso en Vercel.'
-        }
-        failure {
-            echo '❌ Falló el despliegue. Revisa los logs.'
+        always {
+            echo 'Pipeline finalizada'
         }
     }
 }
