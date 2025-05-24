@@ -5,11 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const element = document.getElementById(id);
     if (element) {
       try {
-        const res = await fetch(url);
-        const html = await res.text();
+        var res = await fetch(url);
+        var html = await res.text();
         element.innerHTML = html;
       } catch (error) {
-        console.error(`Error al cargar ${url}:`, error);
+        console.error(`Error al cargar ${any}:`, error.message);
       }
     }
   };

@@ -22,6 +22,7 @@ pipeline {
                 echo 'Eliminando versión anterior...'
 
                 // Borra archivos en la carpeta de producción
+                //sh 'systemctl restart mi-aplicacion'//
                 bat 'rmdir /s /q "C:\\inetpub\\Mi app jenkins"'
                 bat 'mkdir "C:\\inetpub\\Mi app jenkins"'
 
