@@ -1,44 +1,64 @@
 pipeline {
-    agent any // Ejecuta este pipeline en cualquier agente disponible
+    agent any
+
+    environment {
+        DEPLOY_DIR = "C:\\inetpub\\Mi app jenkins"
+    }
+
+    options {
+        timestamps()
+    }
 
     stages {
 
-        stage('Build') {
+        stage('Instalación de dependencias') {
             steps {
-                // Ejecuta npm install en Windows usando PowerShell
-                bat 'npm install'
+                echo 'Instalando dependencias...'
+                bat 'npm ci'
             }
         }
 
-        stage('Test') {
+        stage('Verificación de buenas prácticas') {
             steps {
-                // Ejecuta pruebas unitarias usando npm test en Windows
+                echo 'Analizando calidad del código...'
+                // Asegúrate de tener ESLint configurado en el proyecto
+                bat 'npx eslint .'
+                
+                echo 'Revisando vulnerabilidades...'
+                bat 'npm audit --audit-level=high'
+            }
+        }
+
+        stage('Pruebas') {
+            steps {
+                echo 'Ejecutando pruebas unitarias...'
                 bat 'npm test'
             }
         }
 
-        stage('Deploy') {
+        stage('Despliegue') {
             steps {
-                echo 'Eliminando versión anterior...'
-
-                // Borra archivos en la carpeta de producción
-                //sh 'systemctl restart mi-aplicacion'//
-                bat 'rmdir /s /q "C:\\inetpub\\Mi app jenkins"'
-                bat 'mkdir "C:\\inetpub\\Mi app jenkins"'
+                echo "Eliminando versión anterior en ${env.DEPLOY_DIR}..."
+                bat "if exist \"${env.DEPLOY_DIR}\" rmdir /s /q \"${env.DEPLOY_DIR}\""
+                bat "mkdir \"${env.DEPLOY_DIR}\""
 
                 echo 'Copiando nueva versión...'
+                bat "xcopy /E /I /Y * \"${env.DEPLOY_DIR}\\\""
 
-                // Copia todo el contenido del workspace a la carpeta de producción
-                bat 'xcopy /E /I /Y * "C:\\inetpub\\Mi app jenkins\\"'
-
-                echo 'Despliegue completado.'
+                echo 'Despliegue completado exitosamente.'
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline finalizado'
+            echo 'Pipeline finalizado.'
+        }
+        success {
+            echo 'Pipeline ejecutado correctamente.'
+        }
+        failure {
+            echo 'Error durante la ejecución del pipeline. Verifique los logs.'
         }
     }
 }
