@@ -21,7 +21,7 @@ pipeline {
         stage('Verificación de buenas prácticas') {
             steps {
                 echo 'Analizando calidad del código...'
-                // Asegúrate de tener ESLint configurado en el proyecto
+                
                 bat 'npx eslint .'
                 
                 echo 'Revisando vulnerabilidades...'
